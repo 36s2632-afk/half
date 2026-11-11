@@ -464,62 +464,87 @@
       }
     }
 
-    // TAGO 전국 지하철역 목록 API
-    // 주의: 정적 웹사이트에서는 serviceKey가 브라우저에 노출됩니다.
+    // TAGO 전국 지하철역 API: 전체 목록과 역명 키워드 검색을 모두 지원합니다.
     const TAGO_SERVICE_KEY = '6655d61184f84836d1b53a694f6ec76c871d6899d1e9b8eba4b9ab6bb89886a7';
     const TAGO_STATION_API = 'https://apis.data.go.kr/1613000/SubwayInfo/GetKwrdFndSubwaySttnList';
     let tagoStationNamesPromise = null;
+    let stationSearchTimer = null;
 
+    async function requestTagoStations(keyword = '') {
+      const params = new URLSearchParams({
+        serviceKey: TAGO_SERVICE_KEY,
+        subwayStationName: keyword,
+        numOfRows: '10000',
+        pageNo: '1',
+        _type: 'json'
+      });
+
+      let response;
+      try {
+        response = await fetch(`${TAGO_STATION_API}?${params.toString()}`);
+      } catch (error) {
+        throw new Error('전국 역 검색 API에 연결하지 못했습니다. 브라우저 CORS 또는 공공데이터포털 접근 권한을 확인해야 합니다.');
+      }
+
+      if (!response.ok) throw new Error(`전국 지하철역 API 응답 오류 (HTTP ${response.status})`);
+
+      const payload = await response.json();
+      const header = payload?.response?.header;
+      const body = payload?.response?.body;
+
+      if (header?.resultCode && !['00', '0'].includes(String(header.resultCode))) {
+        throw new Error(header.resultMsg || `TAGO API 오류 코드: ${header.resultCode}`);
+      }
+      if (!body || !body.items) {
+        throw new Error('TAGO API 응답에 역 목록이 없습니다. 공공데이터포털의 인증키와 JSON 응답을 확인해 주세요.');
+      }
+
+      let items = body.items.item || [];
+      if (!Array.isArray(items)) items = items ? [items] : [];
+      return items
+        .map(item => ({
+          name: String(item.subwayStationName || '').trim(),
+          id: String(item.subwayStationId || ''),
+          line: String(item.subwayRouteName || '').trim()
+        }))
+        .filter(item => item.name);
+    }
+
+    // 전체 목록은 검색창 자동완성용으로 한 번만 불러옵니다.
     async function loadTagoStationNames() {
       if (tagoStationNamesPromise) return tagoStationNamesPromise;
-
-      tagoStationNamesPromise = (async () => {
-        const params = new URLSearchParams({
-          serviceKey: TAGO_SERVICE_KEY,
-          subwayStationName: '',
-          numOfRows: '10000',
-          pageNo: '1',
-          _type: 'json'
+      tagoStationNamesPromise = requestTagoStations('').then(items => {
+        const unique = new Map();
+        items.forEach(item => {
+          const key = normalizeStationName(item.name);
+          if (key && !unique.has(key)) unique.set(key, item.name);
         });
-        const response = await fetch(`${TAGO_STATION_API}?${params.toString()}`);
-        if (!response.ok) throw new Error(`전국 지하철역 API 응답 오류 (HTTP ${response.status})`);
 
-        const payload = await response.json();
-        const body = payload && payload.response && payload.response.body;
-        const header = payload && payload.response && payload.response.header;
-        if (header && header.resultCode && !['00', '0'].includes(String(header.resultCode))) {
-          throw new Error(header.resultMsg || '전국 지하철역 API에서 오류를 반환했습니다.');
-        }
-        if (!body || !body.items) {
-          throw new Error('전국 지하철역 API 응답 형식을 확인할 수 없습니다. 공공데이터포털의 JSON 응답 설정을 확인해 주세요.');
-        }
-
-        let items = body.items.item || [];
-        if (!Array.isArray(items)) items = [items];
-
-        // 역명은 노선별로 중복될 수 있으므로 역명 기준으로 통합합니다.
-        const names = new Set(items
-          .map(item => String(item.subwayStationName || '').trim())
-          .filter(Boolean)
-          .map(name => normalizeStationName(name)));
-
-        if (!names.size) throw new Error('전국 지하철역 목록이 비어 있습니다.');
+        const names = [...unique.values()].sort((a, b) => a.localeCompare(b, 'ko'));
         const datalist = document.getElementById('allStationOptions');
         if (datalist) {
           datalist.innerHTML = '';
-          [...names].sort((a, b) => a.localeCompare(b, 'ko')).forEach(name => {
+          names.forEach(name => {
             const option = document.createElement('option');
             option.value = name;
             datalist.appendChild(option);
           });
         }
-        return names;
-      })().catch(error => {
+        return new Set(names.map(normalizeStationName));
+      }).catch(error => {
         tagoStationNamesPromise = null;
         throw error;
       });
-
       return tagoStationNamesPromise;
+    }
+
+    // 입력한 역 이름을 TAGO에 직접 질의합니다. 전체 목록 캐시나 카카오 주변 15개 결과에 의존하지 않습니다.
+    async function searchTagoStation(keyword) {
+      const items = await requestTagoStations(keyword);
+      const query = normalizeStationName(keyword);
+      const matched = items.filter(item => normalizeStationName(item.name).includes(query));
+      if (!matched.length) throw new Error(`TAGO 전국 역 목록에서 "${keyword}" 역을 찾지 못했습니다.`);
+      return matched;
     }
 
     function normalizeStationName(name) {
@@ -626,33 +651,58 @@
       };
     }
 
-    // 전국 역 목록에서 직접 고른 역으로 추천 결과와 각 구성원의 길찾기 링크를 갱신합니다.
+    // 사용자가 입력한 역명을 TAGO에 직접 검색한 뒤 카카오 좌표로 길찾기 목적지를 갱신합니다.
     async function applySelectedStation() {
       const input = document.getElementById('allStationPicker');
       const requestedName = input.value.trim();
       if (!requestedName) return;
 
       try {
-        const registeredStations = await loadTagoStationNames();
+        const matches = await searchTagoStation(requestedName);
         const normalized = normalizeStationName(requestedName);
-        if (!registeredStations.has(normalized)) {
-          throw new Error('전국 역 목록에서 일치하는 역을 선택해 주세요.');
-        }
+        const selectedRecord = matches.find(item => normalizeStationName(item.name) === normalized) || matches[0];
+        const stationName = selectedRecord.name.endsWith('역') ? selectedRecord.name : selectedRecord.name + '역';
 
-        const station = await geocodeAddress(requestedName + '역');
-        const selected = { name: requestedName + '역', lat: station.lat, lng: station.lng };
+        await loadKakaoSdk();
+        const stationCoords = await geocodeAddress(stationName);
+        const selected = { name: stationName, lat: stationCoords.lat, lng: stationCoords.lng };
+
         document.getElementById('recommendedStation').textContent = '✦ ' + selected.name;
-
         const rows = document.querySelectorAll('#routeTableBody tr');
         rows.forEach((row, index) => {
           const link = row.querySelector('a[href]');
           const origin = lastCalculatedOrigins[index];
           if (link && origin) link.href = buildTransitRouteUrl(members[index].address, origin, selected);
         });
+        hideStatus();
       } catch (error) {
         showStatus(error.message, 'error');
       }
     }
+
+    // 검색어 입력 중 TAGO 검색 결과를 datalist에 표시합니다.
+    document.getElementById('allStationPicker')?.addEventListener('input', event => {
+      const keyword = event.target.value.trim();
+      if (stationSearchTimer) clearTimeout(stationSearchTimer);
+      if (keyword.length < 2) return;
+
+      stationSearchTimer = setTimeout(async () => {
+        try {
+          const matches = await searchTagoStation(keyword);
+          const datalist = document.getElementById('allStationOptions');
+          if (!datalist) return;
+          datalist.innerHTML = '';
+          [...new Map(matches.map(item => [normalizeStationName(item.name), item.name])).values()]
+            .forEach(name => {
+              const option = document.createElement('option');
+              option.value = name;
+              datalist.appendChild(option);
+            });
+        } catch (error) {
+          // 입력 중에는 조용히 대기하고, 선택/확정 시 applySelectedStation에서 오류를 표시합니다.
+        }
+      }, 250);
+    });
 
     document.getElementById('allStationPicker')?.addEventListener('change', applySelectedStation);
 
