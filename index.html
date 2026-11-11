@@ -569,9 +569,9 @@
 
     function normalizeStationName(name) {
       return String(name || '')
-        .replace(/\\s+/g, '')
+        .replace(/\s+/g, '')
         .replace(/역$/,'')
-        .replace(/\\([^)]*\\)/g,'')
+        .replace(/\([^)]*\)/g,'')
         .trim();
     }
 
