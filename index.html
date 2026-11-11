@@ -424,8 +424,8 @@
         const midLat = parseFloat((sumLat / coords.length).toFixed(6));
         const midLng = parseFloat((sumLng / coords.length).toFixed(6));
 
-        // 가장 가까운 거점 지하철역 찾기
-        const nearestStation = findNearestStation(midLat, midLng);
+        // 카카오맵에서 중간 지점 주변 실제 지하철역 검색
+        const nearestStation = await findNearestStation(midLat, midLng);
 
         // Render Summary
         document.getElementById('recommendedStation').textContent = `✦ ${nearestStation.name}`;
@@ -467,23 +467,55 @@
       }
     }
 
-    // 직선 거리 기반 가장 가까운 지하철역 매칭 함수
+    // 카카오 장소 검색(SW8: 지하철역)으로 실제 주변 역을 동적으로 검색
+    // 기존 MAJOR_STATIONS 고정 목록에 없는 김포공항역, 고덕역 등도 검색 대상에 포함됩니다.
     function findNearestStation(lat, lng) {
-      let minDistance = Infinity;
-      let nearest = MAJOR_STATIONS[0];
+      return new Promise((resolve, reject) => {
+        const places = new kakao.maps.services.Places();
+        const center = new kakao.maps.LatLng(lat, lng);
 
-      MAJOR_STATIONS.forEach(station => {
-        const dLat = station.lat - lat;
-        const dLng = station.lng - lng;
-        const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+        places.categorySearch('SW8', (data, status) => {
+          if (status !== kakao.maps.services.Status.OK || !data || data.length === 0) {
+            reject(new Error('중간 지점 주변의 지하철역을 찾지 못했습니다. 출발지 주소를 확인하거나 다시 시도해 주세요.'));
+            return;
+          }
 
-        if (dist < minDistance) {
-          minDistance = dist;
-          nearest = station;
-        }
+          const stations = data
+            .map(place => ({
+              name: place.place_name,
+              lat: Number(place.y),
+              lng: Number(place.x),
+              distance: Number(place.distance || 0)
+            }))
+            .filter(station => Number.isFinite(station.lat) && Number.isFinite(station.lng));
+
+          if (!stations.length) {
+            reject(new Error('카카오맵에서 유효한 지하철역 좌표를 받지 못했습니다.'));
+            return;
+          }
+
+          // Kakao categorySearch의 거리순 결과 중 가장 가까운 역을 선택합니다.
+          stations.sort((a, b) => {
+            const distance = station =>
+              Math.hypot((station.lat - lat) * 111000,
+                (station.lng - lng) * 111000 * Math.cos(lat * Math.PI / 180));
+            return distance(a) - distance(b);
+          });
+
+          const nearest = stations[0];
+          // 기존 결과 화면 및 길찾기 링크에서 사용하던 이름 형식 유지
+          resolve({
+            name: nearest.name,
+            lat: nearest.lat,
+            lng: nearest.lng
+          });
+        }, {
+          location: center,
+          radius: 20000,
+          sort: kakao.maps.services.SortBy.DISTANCE,
+          size: 15
+        });
       });
-
-      return nearest;
     }
 
     // Kakao Maps JavaScript SDK. Register your deployed domain in Kakao Developers.
