@@ -249,6 +249,14 @@
             <span class="text-slate-500 text-xs font-medium">추천 지하철역:</span> 
             <span id="recommendedStation" class="font-extrabold text-brand-900 text-lg sm:text-xl bg-white px-3 py-1 rounded-xl shadow-sm border border-brand-200 inline-block"></span>
           </div>
+          <div class="pt-2 space-y-1.5">
+            <label for="allStationPicker" class="block text-xs font-semibold text-slate-600">전국 역에서 직접 선택</label>
+            <input id="allStationPicker" list="allStationOptions" autocomplete="off"
+              placeholder="역 이름 검색 (예: 고덕, 김포공항)"
+              class="w-full rounded-lg border border-brand-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-300">
+            <datalist id="allStationOptions"></datalist>
+            <p class="text-[11px] text-slate-500">공공데이터포털에 등록된 역 이름 전체에서 검색할 수 있어요.</p>
+          </div>
 
           <div class="text-xs text-slate-600 pt-1 flex items-center gap-2 border-t border-brand-100/80">
             <span class="text-slate-500">중심 좌표:</span> 
@@ -286,7 +294,7 @@
   <!-- Footer -->
   <footer class="bg-white border-t border-slate-200 mt-auto py-5">
     <div class="max-w-4xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
-      <p>공공 데이터 및 지하철 거점 최적화 알고리즘 기반 서비스</p>
+      <p>전국 지하철역 데이터 기반 모임 장소 추천 서비스</p>
       <p class="text-slate-400">Copyright © HALFWAY. All rights reserved.</p>
     </div>
   </footer>
@@ -294,21 +302,9 @@
   <script>
     // State
     const members = [];
+    let lastCalculatedOrigins = [];
 
-    // 주요 지하철 거점 역 데이터 (중간지점 계산 시 가장 가까운 역을 매칭)
-    const MAJOR_STATIONS = [
-      { name: '사당역 (2, 4호선)', lat: 37.476538, lng: 126.981685 },
-      { name: '신도림역 (1, 2호선)', lat: 37.508821, lng: 126.891211 },
-      { name: '강남역 (2호선, 신분당선)', lat: 37.497952, lng: 127.027619 },
-      { name: '서울역 (1, 4호선, 공항철도)', lat: 37.554722, lng: 126.970833 },
-      { name: '고속터미널역 (3, 7, 9호선)', lat: 37.504810, lng: 127.004943 },
-      { name: '왕십리역 (2, 5, 수인분당, 경의중앙)', lat: 37.561268, lng: 127.037108 },
-      { name: '홍대입구역 (2호선, 공항철도)', lat: 37.557527, lng: 126.924466 },
-      { name: '종로3가역 (1, 3, 5호선)', lat: 37.571620, lng: 126.991806 },
-      { name: '여의도역 (5, 9호선)', lat: 37.521569, lng: 126.924311 },
-      { name: '잠실역 (2, 8호선)', lat: 37.513950, lng: 127.102234 },
-      { name: '판교역 (신분당선, 경강선)', lat: 37.394776, lng: 127.111160 }
-    ];
+    // 역 목록은 TAGO 전국 지하철역 API에서 동적으로 불러옵니다.
 
     // Form Submit Handler (Triggered by button click OR Enter key)
     function handleFormSubmit(e) {
@@ -435,6 +431,7 @@
         const routeTableBody = document.getElementById('routeTableBody');
         routeTableBody.innerHTML = '';
 
+        lastCalculatedOrigins = coords.slice();
         members.forEach((m) => {
           const row = document.createElement('tr');
           row.className = 'hover:bg-slate-50 transition-colors';
@@ -465,57 +462,6 @@
       } catch (err) {
         showStatus(`계산 중 오류가 발생했습니다: ${err.message}`, 'error');
       }
-    }
-
-    // 카카오 장소 검색(SW8: 지하철역)으로 실제 주변 역을 동적으로 검색
-    // 기존 MAJOR_STATIONS 고정 목록에 없는 김포공항역, 고덕역 등도 검색 대상에 포함됩니다.
-    function findNearestStation(lat, lng) {
-      return new Promise((resolve, reject) => {
-        const places = new kakao.maps.services.Places();
-        const center = new kakao.maps.LatLng(lat, lng);
-
-        places.categorySearch('SW8', (data, status) => {
-          if (status !== kakao.maps.services.Status.OK || !data || data.length === 0) {
-            reject(new Error('중간 지점 주변의 지하철역을 찾지 못했습니다. 출발지 주소를 확인하거나 다시 시도해 주세요.'));
-            return;
-          }
-
-          const stations = data
-            .map(place => ({
-              name: place.place_name,
-              lat: Number(place.y),
-              lng: Number(place.x),
-              distance: Number(place.distance || 0)
-            }))
-            .filter(station => Number.isFinite(station.lat) && Number.isFinite(station.lng));
-
-          if (!stations.length) {
-            reject(new Error('카카오맵에서 유효한 지하철역 좌표를 받지 못했습니다.'));
-            return;
-          }
-
-          // Kakao categorySearch의 거리순 결과 중 가장 가까운 역을 선택합니다.
-          stations.sort((a, b) => {
-            const distance = station =>
-              Math.hypot((station.lat - lat) * 111000,
-                (station.lng - lng) * 111000 * Math.cos(lat * Math.PI / 180));
-            return distance(a) - distance(b);
-          });
-
-          const nearest = stations[0];
-          // 기존 결과 화면 및 길찾기 링크에서 사용하던 이름 형식 유지
-          resolve({
-            name: nearest.name,
-            lat: nearest.lat,
-            lng: nearest.lng
-          });
-        }, {
-          location: center,
-          radius: 20000,
-          sort: kakao.maps.services.SortBy.DISTANCE,
-          size: 15
-        });
-      });
     }
 
     // TAGO 전국 지하철역 목록 API
@@ -558,6 +504,15 @@
           .map(name => normalizeStationName(name)));
 
         if (!names.size) throw new Error('전국 지하철역 목록이 비어 있습니다.');
+        const datalist = document.getElementById('allStationOptions');
+        if (datalist) {
+          datalist.innerHTML = '';
+          [...names].sort((a, b) => a.localeCompare(b, 'ko')).forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            datalist.appendChild(option);
+          });
+        }
         return names;
       })().catch(error => {
         tagoStationNamesPromise = null;
@@ -670,6 +625,36 @@
         lng: candidates[0].lng
       };
     }
+
+    // 전국 역 목록에서 직접 고른 역으로 추천 결과와 각 구성원의 길찾기 링크를 갱신합니다.
+    async function applySelectedStation() {
+      const input = document.getElementById('allStationPicker');
+      const requestedName = input.value.trim();
+      if (!requestedName) return;
+
+      try {
+        const registeredStations = await loadTagoStationNames();
+        const normalized = normalizeStationName(requestedName);
+        if (!registeredStations.has(normalized)) {
+          throw new Error('전국 역 목록에서 일치하는 역을 선택해 주세요.');
+        }
+
+        const station = await geocodeAddress(requestedName + '역');
+        const selected = { name: requestedName + '역', lat: station.lat, lng: station.lng };
+        document.getElementById('recommendedStation').textContent = '✦ ' + selected.name;
+
+        const rows = document.querySelectorAll('#routeTableBody tr');
+        rows.forEach((row, index) => {
+          const link = row.querySelector('a[href]');
+          const origin = lastCalculatedOrigins[index];
+          if (link && origin) link.href = buildTransitRouteUrl(members[index].address, origin, selected);
+        });
+      } catch (error) {
+        showStatus(error.message, 'error');
+      }
+    }
+
+    document.getElementById('allStationPicker')?.addEventListener('change', applySelectedStation);
 
     // Kakao Map's official deep link opens the public-transit route result.
     function buildTransitRouteUrl(originName, origin, destination) {
