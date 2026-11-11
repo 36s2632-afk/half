@@ -607,56 +607,59 @@
     }
 
     // TAGO 전국 역 목록을 기준으로 카카오맵의 실제 역 좌표를 조회해 가장 가까운 역을 선택합니다.
+    // 카카오맵에서 중간 지점 주변 지하철역을 검색하고
+    // 실제 좌표를 기준으로 가장 가까운 역을 선택합니다.
+    // TAGO 역명과 카카오 장소명은 표기가 다를 수 있으므로
+    // 두 API의 이름을 엄격하게 일치시키지 않습니다.
     async function findNearestStation(lat, lng) {
-      const [registeredStations, kakaoStations] = await Promise.all([
-        loadTagoStationNames(),
-        new Promise((resolve, reject) => {
-          const places = new kakao.maps.services.Places();
-          places.categorySearch('SW8', (data, status) => {
-            if (status !== kakao.maps.services.Status.OK || !data || data.length === 0) {
-              reject(new Error('중간 지점 주변에서 카카오맵 지하철역을 찾지 못했습니다.'));
-              return;
-            }
-            resolve(data);
-          }, {
-            location: new kakao.maps.LatLng(lat, lng),
-            radius: 20000,
-            sort: kakao.maps.services.SortBy.DISTANCE,
-            size: 15
-          });
-        })
-      ]);
+      const kakaoStations = await new Promise((resolve, reject) => {
+        const places = new kakao.maps.services.Places();
+
+        places.categorySearch('SW8', (data, status) => {
+          if (
+            status !== kakao.maps.services.Status.OK ||
+            !data ||
+            data.length === 0
+          ) {
+            reject(new Error('중간 지점 주변의 지하철역을 찾지 못했습니다. 카카오 장소 검색 결과와 설정을 확인해 주세요.'));
+            return;
+          }
+
+          resolve(data);
+        }, {
+          location: new kakao.maps.LatLng(lat, lng),
+          radius: 20000,
+          sort: kakao.maps.services.SortBy.DISTANCE,
+          size: 15
+        });
+      });
 
       const candidates = kakaoStations
         .map(place => ({
-          name: place.place_name,
+          name: String(place.place_name || '').trim(),
           lat: Number(place.y),
-          lng: Number(place.x),
-          normalizedName: normalizeStationName(place.place_name)
+          lng: Number(place.x)
         }))
         .filter(station =>
+          station.name &&
           Number.isFinite(station.lat) &&
-          Number.isFinite(station.lng) &&
-          registeredStations.has(station.normalizedName)
+          Number.isFinite(station.lng)
         );
 
       if (!candidates.length) {
-        throw new Error('공공데이터포털 전국 역 목록과 카카오맵 주변 역을 연결하지 못했습니다. 역 목록 API 응답과 카카오 장소 검색 결과를 확인해 주세요.');
+        throw new Error('카카오맵에서 유효한 지하철역 좌표를 찾지 못했습니다.');
       }
 
-      candidates.sort((a, b) => {
-        const distance = station => Math.hypot(
-          (station.lat - lat) * 111000,
-          (station.lng - lng) * 111000 * Math.cos(lat * Math.PI / 180)
-        );
-        return distance(a) - distance(b);
-      });
+      const distance = station => Math.hypot(
+        (station.lat - lat) * 111000,
+        (station.lng - lng) *
+          111000 *
+          Math.cos(lat * Math.PI / 180)
+      );
 
-      return {
-        name: candidates[0].name,
-        lat: candidates[0].lat,
-        lng: candidates[0].lng
-      };
+      candidates.sort((a, b) => distance(a) - distance(b));
+
+      return candidates[0];
     }
 
     // 사용자가 입력한 역명을 TAGO에 직접 검색한 뒤 카카오 좌표로 길찾기 목적지를 갱신합니다.
