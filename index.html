@@ -252,7 +252,7 @@
           <div class="pt-2 space-y-1.5">
             <label for="allStationPicker" class="block text-xs font-semibold text-slate-600">전국 역에서 직접 선택</label>
             <input id="allStationPicker" list="allStationOptions" autocomplete="off"
-              placeholder="역 이름 검색 (예: 고덕, 김포공항)"
+              placeholder="역 이름 검색 (예: 삼성중앙역, 고덕역, 김포공항역)"
               class="w-full rounded-lg border border-brand-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-300">
             <datalist id="allStationOptions"></datalist>
             <p class="text-[11px] text-slate-500">공공데이터포털에 등록된 역 이름 전체에서 검색할 수 있어요.</p>
@@ -540,9 +540,17 @@
 
     // 입력한 역 이름을 TAGO에 직접 질의합니다. 전체 목록 캐시나 카카오 주변 15개 결과에 의존하지 않습니다.
     async function searchTagoStation(keyword) {
-      const items = await requestTagoStations(keyword);
+      // TAGO 역명은 '삼성중앙'처럼 '역' 접미사가 없는 형태일 수 있으므로
+      // 먼저 접미사를 제거한 키워드로 조회하고, 필요하면 원문으로 재시도합니다.
       const query = normalizeStationName(keyword);
-      const matched = items.filter(item => normalizeStationName(item.name).includes(query));
+      let items = await requestTagoStations(query);
+      let matched = items.filter(item => normalizeStationName(item.name).includes(query));
+
+      if (!matched.length && keyword !== query) {
+        items = await requestTagoStations(keyword);
+        matched = items.filter(item => normalizeStationName(item.name).includes(query));
+      }
+
       if (!matched.length) throw new Error(`TAGO 전국 역 목록에서 "${keyword}" 역을 찾지 못했습니다.`);
       return matched;
     }
@@ -705,6 +713,12 @@
     });
 
     document.getElementById('allStationPicker')?.addEventListener('change', applySelectedStation);
+    document.getElementById('allStationPicker')?.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        applySelectedStation();
+      }
+    });
 
     // Kakao Map's official deep link opens the public-transit route result.
     function buildTransitRouteUrl(originName, origin, destination) {
