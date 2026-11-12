@@ -432,6 +432,34 @@
   @media(max-width:640px){#introScreen .intro-city-background{object-position:58% bottom}.intro-bus{bottom:7%;width:230px}.intro-cloud{height:22px}}
   @media(prefers-reduced-motion:reduce){.intro-bus,.intro-cloud,#introScreen .intro-title{animation:none!important}}
 
+
+  /* Pixel city image: preserve the original skyline artwork and recolor it with the HALF WAY palette. */
+  #introScreen{
+    background:transparent!important;
+    background-color:transparent!important;
+  }
+  #introScreen .intro-city-background{
+    position:absolute!important;
+    inset:0!important;
+    z-index:0!important;
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+    object-position:center bottom!important;
+    image-rendering:pixelated;
+    filter:saturate(.82) hue-rotate(9deg) brightness(.88) contrast(1.12);
+    opacity:1!important;
+    pointer-events:none!important;
+  }
+  #introScreen::before{content:none!important;display:none!important;background:none!important}
+  #introScreen .intro-stars{z-index:1!important;opacity:.24!important}
+  #introScreen .intro-grid{z-index:1!important;opacity:.13!important}
+  #introScreen .intro-cloud{z-index:2!important}
+  #introScreen .intro-bus{z-index:3!important}
+  #introScreen .intro-pixel-rain{z-index:4!important}
+  #introScreen .intro-content{z-index:5!important}
+
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
