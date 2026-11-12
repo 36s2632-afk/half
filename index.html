@@ -332,9 +332,151 @@
   .pixel-loading-sub { margin-top: 7px; color: #8b779b; text-align: center; font-size: 12px; }
   @keyframes pixel-loading-progress { 0% { width: 12%; } 45% { width: 64%; } 100% { width: 96%; } }
 
+  
+  /* Reference-led landing screen and full-width city scene */
+  body::before {
+    z-index: 0 !important;
+    opacity: 1 !important;
+    background-image:
+      linear-gradient(180deg, rgba(255,235,246,.08), rgba(111,73,151,.04) 52%, rgba(33,31,83,.10)),
+      var(--city-scene, linear-gradient(135deg,#f2b5d8,#a995e7,#80d8cf)) !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    image-rendering: pixelated;
+  }
+  body::after { display: none !important; }
+
+  /* The intro is styled after the supplied pink retro welcome reference. */
+  body:not(.app-entered) > header,
+  body:not(.app-entered) > main,
+  body:not(.app-entered) > footer { display: none !important; }
+  #introScreen {
+    position: fixed; inset: 0; z-index: 5000; isolation: isolate;
+    display: grid; place-items: center; overflow: hidden;
+    color: #ffd0ed;
+    background:
+      radial-gradient(ellipse at 50% 42%, rgba(115,42,103,.32), transparent 48%),
+      radial-gradient(ellipse at 50% 100%, rgba(185,56,145,.22), transparent 48%),
+      #160c19;
+    cursor: inherit;
+    transition: opacity .42s ease, visibility .42s ease;
+  }
+  #introScreen.leaving { opacity: 0; visibility: hidden; pointer-events: none; }
+  .intro-stars {
+    position: absolute; inset: 0; z-index: -1; opacity: .8;
+    background-image:
+      radial-gradient(2px 2px at 12% 18%, #ffe2f5 98%, transparent),
+      radial-gradient(1px 1px at 23% 66%, #f5a6d6 98%, transparent),
+      radial-gradient(2px 2px at 76% 22%, #ffe2f5 98%, transparent),
+      radial-gradient(1px 1px at 88% 55%, #f5a6d6 98%, transparent),
+      radial-gradient(1px 1px at 61% 78%, #ffe2f5 98%, transparent),
+      radial-gradient(2px 2px at 43% 12%, #f5a6d6 98%, transparent);
+    background-size: 100% 100%;
+  }
+  .intro-grid {
+    position: absolute; z-index: -1; left: -22%; right: -22%; bottom: -36%;
+    height: 68%; transform: perspective(420px) rotateX(62deg);
+    transform-origin: top center;
+    background-image:
+      linear-gradient(rgba(244,104,194,.58) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(244,104,194,.58) 1px, transparent 1px);
+    background-size: 42px 32px;
+    box-shadow: 0 -20px 80px rgba(230,93,187,.13);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 82%, transparent 100%);
+  }
+  .intro-content {
+    width: min(920px, 92vw); padding: 36px 18px 56px;
+    text-align: center; transform: translateY(-2vh);
+  }
+  .intro-kicker {
+    margin: 0 0 18px; color: #f6a9d8;
+    font: 17px 'BitBit','Noto Sans KR',sans-serif;
+    letter-spacing: .2em; text-shadow: 0 0 12px rgba(255,126,203,.72);
+  }
+  .intro-title {
+    display: inline-block; margin: 0;
+    color: #ffb7df;
+    font: clamp(58px, 11vw, 112px)/1.12 'BitBit','Noto Sans KR',sans-serif;
+    letter-spacing: .075em;
+    -webkit-text-stroke: 1px #ffe2f4;
+    text-shadow: 0 3px 0 #c85b9d, 0 7px 0 #873c79, 0 0 22px rgba(255,117,203,.72), 0 0 48px rgba(210,91,191,.35);
+    animation: halfway-bounce 1.55s ease-in-out infinite;
+    transform-origin: center bottom;
+  }
+  .intro-subtitle {
+    margin: 17px 0 38px; color: #d99bc8;
+    font: clamp(12px,2vw,17px) 'BitBit','Noto Sans KR',sans-serif;
+    letter-spacing: .22em; text-shadow: 0 0 10px rgba(255,117,203,.45);
+  }
+  #enterAppBtn {
+    min-width: 230px; padding: 17px 36px;
+    color: #fff0fa !important;
+    background: linear-gradient(180deg,#f3a2d1,#bd69b1) !important;
+    border: 3px solid #ffd0ed !important;
+    border-radius: 3px !important;
+    box-shadow: 0 0 0 3px #6e3c70, 5px 7px 0 #492b50, 0 0 28px rgba(245,117,201,.32) !important;
+    font: 22px 'BitBit','Noto Sans KR',sans-serif !important;
+    letter-spacing: .12em; text-shadow: 1px 2px #8c467f;
+    transition: transform .12s steps(2), box-shadow .12s steps(2), filter .12s;
+  }
+  #enterAppBtn:hover { filter: brightness(1.12); transform: translateY(-3px); }
+  #enterAppBtn:active { transform: translate(4px,5px); box-shadow: 0 0 0 3px #6e3c70, 1px 2px 0 #492b50 !important; }
+  .intro-footnote {
+    margin: 25px 0 0; color: rgba(238,180,220,.65);
+    font: 10px 'BitBit','Noto Sans KR',sans-serif; letter-spacing: .22em;
+  }
+  @keyframes halfway-bounce {
+    0%,100% { transform: translateY(0) scale(1); }
+    45% { transform: translateY(-15px) scale(1.025); }
+    60% { transform: translateY(-9px) scale(1.01); }
+  }
+
+  /* Make the actual meeting finder feel like a large desktop web app. */
+  main {
+    width: min(1240px, 96vw) !important;
+    max-width: 1240px !important;
+    padding-top: clamp(24px,4vw,48px) !important;
+    padding-bottom: clamp(28px,4vw,52px) !important;
+  }
+  main > div {
+    width: 100% !important;
+    min-height: min(760px, calc(100vh - 150px));
+    padding: clamp(24px,3.8vw,48px) !important;
+    margin: 0 auto !important;
+    background: rgba(255,250,253,.90) !important;
+    backdrop-filter: blur(3px);
+    box-shadow: 5px 6px 0 rgba(70,48,91,.25), inset 0 0 0 3px rgba(255,255,255,.75) !important;
+  }
+  @media (max-width: 640px) {
+    .intro-content { transform: translateY(-1vh); }
+    .intro-kicker { font-size: 13px; }
+    .intro-title { letter-spacing: .025em; }
+    #enterAppBtn { min-width: 190px; font-size: 18px !important; }
+    main { width: 100% !important; }
+    main > div { min-height: calc(100vh - 120px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .intro-title { animation: none; }
+    #introScreen { transition: none; }
+  }
+
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+  <!-- HALFWAY welcome screen -->
+  <section id="introScreen" aria-label="HALFWAY 시작 화면">
+    <div class="intro-stars" aria-hidden="true"></div>
+    <div class="intro-grid" aria-hidden="true"></div>
+    <div class="intro-content">
+      <p class="intro-kicker">✦  WELCOME TO  ✦</p>
+      <h1 class="intro-title">HALFWAY</h1>
+      <p class="intro-subtitle">PIXEL MEETING FINDER</p>
+      <button id="enterAppBtn" type="button" onclick="enterHalfway()">FIND WAY</button>
+      <p class="intro-footnote">FIND YOUR WAY TOGETHER</p>
+    </div>
+  </section>
+
 
   <!-- Header Navigation -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
@@ -526,6 +668,35 @@
   </footer>
 
   <script>
+    // Intro screen transition; all existing finder logic remains intact.
+    function enterHalfway() {
+      const intro = document.getElementById('introScreen');
+      document.body.classList.add('app-entered');
+      if (intro) {
+        intro.classList.add('leaving');
+        window.setTimeout(() => intro.remove(), 460);
+      }
+    }
+
+    // Load the exact pixel-city reference image supplied for the page background.
+    fetch('./assets/halfway-city-background.webp.b64')
+      .then(response => {
+        if (!response.ok) throw new Error('배경 이미지를 불러오지 못했습니다.');
+        return response.text();
+      })
+      .then(encodedImage => {
+        const cleanBase64 = encodedImage.trim();
+        if (cleanBase64) {
+          document.documentElement.style.setProperty(
+            '--city-scene',
+            'url("data:image/webp;base64,' + cleanBase64 + '")'
+          );
+        }
+      })
+      .catch(() => {
+        // Keep the gradient fallback if the background asset is unavailable.
+      });
+
     // State
     const members = [];
     let lastCalculatedOrigins = [];
