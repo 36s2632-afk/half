@@ -371,6 +371,43 @@
   @media(max-width:640px){.intro-title{letter-spacing:.025em}#enterAppBtn{min-width:190px;font-size:18px!important}main>div{padding:1rem!important}}
   @media(prefers-reduced-motion:reduce){.intro-title,.intro-pixel-rain i{animation:none!important}}
 
+
+  /* Readability refinement: deeper pastel welcome backdrop, brighter lettering. */
+  #introScreen{
+    background:
+      radial-gradient(ellipse at 18% 18%,rgba(213,202,239,.16),transparent 38%),
+      radial-gradient(ellipse at 82% 76%,rgba(160,221,202,.19),transparent 42%),
+      linear-gradient(135deg,#756b96 0%,#986f91 52%,#648f86 100%)!important;
+    color:#fff8fd!important;
+  }
+  #introScreen .intro-kicker,
+  #introScreen .intro-subtitle,
+  #introScreen .intro-footnote{
+    color:#fff4fb!important;
+    text-shadow:0 2px 5px rgba(48,39,70,.38)!important;
+  }
+  #introScreen .intro-stars{opacity:.72}
+  #introScreen .intro-grid{
+    opacity:.25;
+    background-image:linear-gradient(rgba(255,237,250,.24) 1px,transparent 1px),linear-gradient(90deg,rgba(255,237,250,.24) 1px,transparent 1px);
+  }
+  #introScreen .intro-title{
+    color:#fffaff!important;
+    -webkit-text-stroke:1px #d8c9ed;
+    text-shadow:0 3px 0 #a99acb,0 7px 0 #766b96,0 0 20px rgba(255,255,255,.62),0 0 42px rgba(240,205,231,.34);
+  }
+  /* Keep the pastel palette but make the landing screen less glaring. */
+  .pixel-spark{animation-duration:1.15s!important}
+  @keyframes pixel-pop{
+    0%{opacity:0;transform:translate(0,0) scale(.55)}
+    15%{opacity:1}
+    78%{opacity:.88}
+    100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.35)}
+  }
+  @media(min-width:1280px){
+    main{max-width:76rem!important}
+  }
+
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
@@ -440,7 +477,7 @@
   </header>
 
   <!-- Main Container -->
-  <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
     <!-- Card Wrapper -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
