@@ -487,53 +487,17 @@
   #introScreen .intro-pixel-rain{z-index:4!important;opacity:.22!important}
   #introScreen .intro-content{z-index:5!important;position:relative!important}
 
+  /* Reset previous background experiments to a plain, neutral canvas. */
+  html, body { background: #f8f7fb !important; background-image: none !important; }
+  body::before, body::after { content: none !important; display: none !important; }
+  #introScreen { background: #f8f7fb !important; background-image: none !important; }
+  #introScreen .intro-stars, #introScreen .intro-grid, #introScreen .intro-pixel-rain,
+  #introScreen .intro-city-background, #introScreen .intro-cloud, #introScreen .intro-bus { display:none!important; }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
   <!-- HALFWAY welcome screen -->
   <section id="introScreen" aria-label="HALFWAY 시작 화면">
-    <div class="intro-stars" aria-hidden="true"></div>
-    <img class="intro-city-background" src="./assets/intro-skyline.jpg" alt="" aria-hidden="true">
-    <div class="intro-cloud cloud-one" aria-hidden="true"></div>
-    <div class="intro-cloud cloud-two" aria-hidden="true"></div>
-    <img class="intro-bus" src="data:image/png;base64,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" alt="" aria-hidden="true">
-    <div class="intro-grid" aria-hidden="true"></div>
-    <div class="intro-pixel-rain" aria-hidden="true">
-    <i style="--x:0%;--delay:0s;--duration:7s;--size:4px;--drift:-60px"></i>
-    <i style="--x:37%;--delay:-1.3s;--duration:7.7s;--size:6px;--drift:-43px"></i>
-    <i style="--x:74%;--delay:-2.6s;--duration:8.4s;--size:8px;--drift:-26px"></i>
-    <i style="--x:11%;--delay:-3.9s;--duration:9.1s;--size:10px;--drift:-9px"></i>
-    <i style="--x:48%;--delay:-5.2s;--duration:9.8s;--size:12px;--drift:8px"></i>
-    <i style="--x:85%;--delay:-6.5s;--duration:10.5s;--size:5px;--drift:25px"></i>
-    <i style="--x:22%;--delay:-7.8s;--duration:11.2s;--size:7px;--drift:42px"></i>
-    <i style="--x:59%;--delay:-0.1s;--duration:11.9s;--size:9px;--drift:59px"></i>
-    <i style="--x:96%;--delay:-1.4s;--duration:12.6s;--size:11px;--drift:-44px"></i>
-    <i style="--x:33%;--delay:-2.7s;--duration:13.3s;--size:4px;--drift:-27px"></i>
-    <i style="--x:70%;--delay:-4s;--duration:7.5s;--size:6px;--drift:-10px"></i>
-    <i style="--x:7%;--delay:-5.3s;--duration:8.2s;--size:8px;--drift:7px"></i>
-    <i style="--x:44%;--delay:-6.6s;--duration:8.9s;--size:10px;--drift:24px"></i>
-    <i style="--x:81%;--delay:-7.9s;--duration:9.6s;--size:12px;--drift:41px"></i>
-    <i style="--x:18%;--delay:-0.2s;--duration:10.3s;--size:5px;--drift:58px"></i>
-    <i style="--x:55%;--delay:-1.5s;--duration:11s;--size:7px;--drift:-45px"></i>
-    <i style="--x:92%;--delay:-2.8s;--duration:11.7s;--size:9px;--drift:-28px"></i>
-    <i style="--x:29%;--delay:-4.1s;--duration:12.4s;--size:11px;--drift:-11px"></i>
-    <i style="--x:66%;--delay:-5.4s;--duration:13.1s;--size:4px;--drift:6px"></i>
-    <i style="--x:3%;--delay:-6.7s;--duration:7.3s;--size:6px;--drift:23px"></i>
-    <i style="--x:40%;--delay:-8s;--duration:8s;--size:8px;--drift:40px"></i>
-    <i style="--x:77%;--delay:-0.3s;--duration:8.7s;--size:10px;--drift:57px"></i>
-    <i style="--x:14%;--delay:-1.6s;--duration:9.4s;--size:12px;--drift:-46px"></i>
-    <i style="--x:51%;--delay:-2.9s;--duration:10.1s;--size:5px;--drift:-29px"></i>
-    <i style="--x:88%;--delay:-4.2s;--duration:10.8s;--size:7px;--drift:-12px"></i>
-    <i style="--x:25%;--delay:-5.5s;--duration:11.5s;--size:9px;--drift:5px"></i>
-    <i style="--x:62%;--delay:-6.8s;--duration:12.2s;--size:11px;--drift:22px"></i>
-    <i style="--x:99%;--delay:-8.1s;--duration:12.9s;--size:4px;--drift:39px"></i>
-    <i style="--x:36%;--delay:-0.4s;--duration:7.1s;--size:6px;--drift:56px"></i>
-    <i style="--x:73%;--delay:-1.7s;--duration:7.8s;--size:8px;--drift:-47px"></i>
-    <i style="--x:10%;--delay:-3s;--duration:8.5s;--size:10px;--drift:-30px"></i>
-    <i style="--x:47%;--delay:-4.3s;--duration:9.2s;--size:12px;--drift:-13px"></i>
-    <i style="--x:84%;--delay:-5.6s;--duration:9.9s;--size:5px;--drift:4px"></i>
-    <i style="--x:21%;--delay:-6.9s;--duration:10.6s;--size:7px;--drift:21px"></i>
-    </div>
     <div class="intro-content">
       <p class="intro-kicker">✦  WELCOME TO  ✦</p>
       <h1 class="intro-title">HALFWAY</h1>
@@ -746,7 +710,25 @@
 
     // State
     const members = [];
+    let nextMemberId = 1;
     let lastCalculatedOrigins = [];
+    let lastCalculatedMembers = [];
+    let calculationVersion = 0;
+    let stationSearchVersion = 0;
+
+    function invalidateResults() {
+      calculationVersion += 1;
+      stationSearchVersion += 1;
+      lastCalculatedOrigins = [];
+      lastCalculatedMembers = [];
+      document.getElementById('resultArea').classList.add('hidden');
+      document.getElementById('routeTableBody').innerHTML = '';
+      document.getElementById('recommendedStation').textContent = '';
+      document.getElementById('midCoordinates').textContent = '';
+      const picker = document.getElementById('allStationPicker');
+      if (picker) picker.value = '';
+      hideStatus();
+    }
 
     // 역 목록은 TAGO 전국 지하철역 API에서 동적으로 불러옵니다.
 
@@ -770,12 +752,9 @@
         return;
       }
 
-      // Add to array
-      members.push({
-        id: Date.now(),
-        name: name,
-        address: address
-      });
+      // Avoid ID collisions when multiple members are added quickly.
+      members.push({ id: nextMemberId++, name, address });
+      invalidateResults();
 
       // Clear Inputs
       nameInput.value = '';
@@ -794,6 +773,7 @@
       const index = members.findIndex(m => m.id === id);
       if (index !== -1) {
         members.splice(index, 1);
+        invalidateResults();
         renderMemberList();
       }
       if (members.length < 2) {
@@ -848,11 +828,14 @@
         return;
       }
 
+      const runVersion = ++calculationVersion;
+      const calculationMembers = members.map(member => ({ ...member }));
       showStatus('각 출발지의 좌표 변환 및 중간 지점을 계산하는 중입니다...', 'info');
 
       try {
         await loadKakaoSdk();
-        const coords = await Promise.all(members.map(m => geocodeAddress(m.address)));
+        const coords = await Promise.all(calculationMembers.map(m => geocodeAddress(m.address)));
+        if (runVersion !== calculationVersion) return;
 
         let sumLat = 0;
         let sumLng = 0;
@@ -876,10 +859,11 @@
         routeTableBody.innerHTML = '';
 
         lastCalculatedOrigins = coords.slice();
-        members.forEach((m) => {
+        lastCalculatedMembers = calculationMembers;
+        calculationMembers.forEach((m, index) => {
           const row = document.createElement('tr');
           row.className = 'hover:bg-slate-50 transition-colors';
-          const origin = coords[members.indexOf(m)];
+          const origin = coords[index];
           const kakaoMapUrl = buildTransitRouteUrl(m.address, origin, nearestStation);
 
           row.innerHTML = `
@@ -904,7 +888,10 @@
         resultArea.classList.remove('hidden');
 
       } catch (err) {
-        showStatus(`계산 중 오류가 발생했습니다: ${err.message}`, 'error');
+        if (runVersion === calculationVersion) {
+          resultArea.classList.add('hidden');
+          showStatus(`계산 중 오류가 발생했습니다: ${err.message}`, 'error');
+        }
       }
     }
 
@@ -932,18 +919,21 @@
 
       if (!response.ok) throw new Error(`전국 지하철역 API 응답 오류 (HTTP ${response.status})`);
 
-      const payload = await response.json();
+      let payload;
+      try {
+        payload = await response.json();
+      } catch {
+        throw new Error('TAGO API가 JSON이 아닌 응답을 반환했습니다. 인증키 또는 API 응답 형식을 확인해 주세요.');
+      }
       const header = payload?.response?.header;
       const body = payload?.response?.body;
-
       if (header?.resultCode && !['00', '0'].includes(String(header.resultCode))) {
         throw new Error(header.resultMsg || `TAGO API 오류 코드: ${header.resultCode}`);
       }
-      if (!body || !body.items) {
+      if (!body || !Object.prototype.hasOwnProperty.call(body, 'items')) {
         throw new Error('TAGO API 응답에 역 목록이 없습니다. 공공데이터포털의 인증키와 JSON 응답을 확인해 주세요.');
       }
-
-      let items = body.items.item || [];
+      let items = body.items?.item ?? [];
       if (!Array.isArray(items)) items = items ? [items] : [];
       return items
         .map(item => ({
@@ -987,6 +977,7 @@
       // TAGO 역명은 '삼성중앙'처럼 '역' 접미사가 없는 형태일 수 있으므로
       // 먼저 접미사를 제거한 키워드로 조회하고, 필요하면 원문으로 재시도합니다.
       const query = normalizeStationName(keyword);
+      if (!query) throw new Error('검색할 역 이름을 입력해 주세요.');
       let items = await requestTagoStations(query);
       let matched = items.filter(item => normalizeStationName(item.name).includes(query));
 
@@ -1001,9 +992,9 @@
 
     function normalizeStationName(name) {
       return String(name || '')
+        .replace(/\([^)]*\)/g, '')
         .replace(/\s+/g, '')
-        .replace(/역$/,'')
-        .replace(/\([^)]*\)/g,'')
+        .replace(/역$/i, '')
         .trim();
     }
 
@@ -1012,40 +1003,56 @@
     let kakaoSdkPromise = null;
 
     function loadKakaoSdk() {
-      if (window.kakao && window.kakao.maps && window.kakao.maps.services) return Promise.resolve();
+      if (window.kakao?.maps?.services) return Promise.resolve();
       if (kakaoSdkPromise) return kakaoSdkPromise;
-
       kakaoSdkPromise = new Promise((resolve, reject) => {
         const script = document.createElement('script');
+        script.async = true;
         script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JAVASCRIPT_KEY}&libraries=services&autoload=false`;
-        script.onload = () => window.kakao.maps.load(resolve);
-        script.onerror = () => {
-          kakaoSdkPromise = null;
-          reject(new Error('카카오 지도 SDK를 불러오지 못했습니다. JavaScript 키와 등록 도메인을 확인해 주세요.'));
+        script.onload = () => {
+          const maps = window.kakao?.maps;
+          if (!maps || typeof maps.load !== 'function') {
+            reject(new Error('카카오 지도 SDK 초기화에 실패했습니다. JavaScript 키와 등록 도메인을 확인해 주세요.'));
+            return;
+          }
+          try {
+            maps.load(() => {
+              if (window.kakao?.maps?.services) resolve();
+              else reject(new Error('카카오 장소 검색 모듈을 불러오지 못했습니다.'));
+            });
+          } catch (error) {
+            reject(new Error(`카카오 지도 SDK 초기화 오류: ${error.message}`));
+          }
         };
+        script.onerror = () => reject(new Error('카카오 지도 SDK를 불러오지 못했습니다. JavaScript 키와 등록 도메인을 확인해 주세요.'));
         document.head.appendChild(script);
+      }).catch(error => {
+        kakaoSdkPromise = null;
+        throw error;
       });
       return kakaoSdkPromise;
     }
 
     // Search an address/place and return its real WGS84 coordinates.
     function geocodeAddress(address) {
+      const query = String(address || '').trim();
+      if (!query) return Promise.reject(new Error('출발지 주소를 입력해 주세요.'));
       return new Promise((resolve, reject) => {
+        const resolveCoordinates = (place, source) => {
+          const lat = Number(place?.y);
+          const lng = Number(place?.x);
+          if (Number.isFinite(lat) && Number.isFinite(lng)) resolve({ lat, lng });
+          else reject(new Error(`"${query}"의 ${source} 좌표가 올바르지 않습니다.`));
+        };
+        const geocoder = new kakao.maps.services.Geocoder();
+        const addressFallback = () => geocoder.addressSearch(query, (results, status) => {
+          if (status === kakao.maps.services.Status.OK && results?.length) resolveCoordinates(results[0], '주소 검색');
+          else reject(new Error(`"${query}" 위치를 찾지 못했습니다. 출발지를 역 이름이나 도로명 주소로 입력해 주세요.`));
+        });
         const places = new kakao.maps.services.Places();
-        places.keywordSearch(address, (data, status) => {
-          if (status === kakao.maps.services.Status.OK && data.length > 0) {
-            resolve({ lat: Number(data[0].y), lng: Number(data[0].x) });
-            return;
-          }
-
-          const geocoder = new kakao.maps.services.Geocoder();
-          geocoder.addressSearch(address, (results, addressStatus) => {
-            if (addressStatus === kakao.maps.services.Status.OK && results.length > 0) {
-              resolve({ lat: Number(results[0].y), lng: Number(results[0].x) });
-            } else {
-              reject(new Error(`"${address}" 위치를 찾지 못했습니다. 출발지를 역 이름이나 정확한 주소로 입력해 주세요.`));
-            }
-          });
+        places.keywordSearch(query, (data, status) => {
+          if (status === kakao.maps.services.Status.OK && data?.length) resolveCoordinates(data[0], '장소 검색');
+          else addressFallback();
         });
       });
     }
@@ -1058,18 +1065,18 @@
     async function findNearestStation(lat, lng) {
       const kakaoStations = await new Promise((resolve, reject) => {
         const places = new kakao.maps.services.Places();
-
-        places.categorySearch('SW8', (data, status) => {
-          if (
-            status !== kakao.maps.services.Status.OK ||
-            !data ||
-            data.length === 0
-          ) {
+        const collected = [];
+        let settled = false;
+        places.categorySearch('SW8', (data, status, pagination) => {
+          if (settled) return;
+          if (status !== kakao.maps.services.Status.OK || !Array.isArray(data)) {
+            settled = true;
             reject(new Error('중간 지점 주변의 지하철역을 찾지 못했습니다. 카카오 장소 검색 결과와 설정을 확인해 주세요.'));
             return;
           }
-
-          resolve(data);
+          collected.push(...data);
+          if (pagination && pagination.current < pagination.last) pagination.gotoPage(pagination.current + 1);
+          else { settled = true; resolve(collected); }
         }, {
           location: new kakao.maps.LatLng(lat, lng),
           radius: 20000,
@@ -1094,12 +1101,15 @@
         throw new Error('카카오맵에서 유효한 지하철역 좌표를 찾지 못했습니다.');
       }
 
-      const distance = station => Math.hypot(
-        (station.lat - lat) * 111000,
-        (station.lng - lng) *
-          111000 *
-          Math.cos(lat * Math.PI / 180)
-      );
+      const distance = station => {
+        const radians = degrees => degrees * Math.PI / 180;
+        const dLat = radians(station.lat - lat);
+        const dLng = radians(station.lng - lng);
+        const a = Math.sin(dLat / 2) ** 2 +
+          Math.cos(radians(lat)) * Math.cos(radians(station.lat)) *
+          Math.sin(dLng / 2) ** 2;
+        return 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      };
 
       candidates.sort((a, b) => distance(a) - distance(b));
 
@@ -1111,27 +1121,33 @@
       const input = document.getElementById('allStationPicker');
       const requestedName = input.value.trim();
       if (!requestedName) return;
-
+      if (!lastCalculatedMembers.length || lastCalculatedOrigins.length !== lastCalculatedMembers.length) {
+        showStatus('먼저 구성원을 등록하고 중간 지점을 계산해 주세요.', 'error');
+        return;
+      }
+      const requestVersion = ++stationSearchVersion;
       try {
         const matches = await searchTagoStation(requestedName);
+        if (requestVersion !== stationSearchVersion) return;
         const normalized = normalizeStationName(requestedName);
         const selectedRecord = matches.find(item => normalizeStationName(item.name) === normalized) || matches[0];
         const stationName = selectedRecord.name.endsWith('역') ? selectedRecord.name : selectedRecord.name + '역';
 
         await loadKakaoSdk();
         const stationCoords = await geocodeAddress(stationName);
+        if (requestVersion !== stationSearchVersion) return;
         const selected = { name: stationName, lat: stationCoords.lat, lng: stationCoords.lng };
-
         document.getElementById('recommendedStation').textContent = '✦ ' + selected.name;
         const rows = document.querySelectorAll('#routeTableBody tr');
         rows.forEach((row, index) => {
           const link = row.querySelector('a[href]');
           const origin = lastCalculatedOrigins[index];
-          if (link && origin) link.href = buildTransitRouteUrl(members[index].address, origin, selected);
+          const member = lastCalculatedMembers[index];
+          if (link && origin && member) link.href = buildTransitRouteUrl(member.address, origin, selected);
         });
         hideStatus();
       } catch (error) {
-        showStatus(error.message, 'error');
+        if (requestVersion === stationSearchVersion) showStatus(error.message, 'error');
       }
     }
 
@@ -1141,9 +1157,11 @@
       if (stationSearchTimer) clearTimeout(stationSearchTimer);
       if (keyword.length < 2) return;
 
+      const searchVersion = ++stationSearchVersion;
       stationSearchTimer = setTimeout(async () => {
         try {
           const matches = await searchTagoStation(keyword);
+          if (searchVersion !== stationSearchVersion || keyword !== event.target.value.trim()) return;
           const datalist = document.getElementById('allStationOptions');
           if (!datalist) return;
           datalist.innerHTML = '';
