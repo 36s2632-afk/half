@@ -951,20 +951,20 @@
         const unique = new Map();
         items.forEach(item => {
           const key = normalizeStationName(item.name);
-          if (key && !unique.has(key)) unique.set(key, item.name);
+          if (key && !unique.has(key)) unique.set(key, item);
         });
 
-        const names = [...unique.values()].sort((a, b) => a.localeCompare(b, 'ko'));
+        const stations = [...unique.values()].sort((a, b) => a.name.localeCompare(b.name, 'ko'));
         const datalist = document.getElementById('allStationOptions');
         if (datalist) {
           datalist.innerHTML = '';
-          names.forEach(name => {
+          stations.forEach(station => {
             const option = document.createElement('option');
-            option.value = name;
+            option.value = station.name;
             datalist.appendChild(option);
           });
         }
-        return new Set(names.map(normalizeStationName));
+        return stations;
       }).catch(error => {
         tagoStationNamesPromise = null;
         throw error;
@@ -972,20 +972,22 @@
       return tagoStationNamesPromise;
     }
 
-    // 입력한 역 이름을 TAGO에 직접 질의합니다. 전체 목록 캐시나 카카오 주변 15개 결과에 의존하지 않습니다.
+    // Search the full TAGO station list locally before falling back to keyword lookup.
     async function searchTagoStation(keyword) {
-      // TAGO 역명은 '삼성중앙'처럼 '역' 접미사가 없는 형태일 수 있으므로
-      // 먼저 접미사를 제거한 키워드로 조회하고, 필요하면 원문으로 재시도합니다.
       const query = normalizeStationName(keyword);
       if (!query) throw new Error('검색할 역 이름을 입력해 주세요.');
-      let items = await requestTagoStations(query);
-      let matched = items.filter(item => normalizeStationName(item.name).includes(query));
 
-      if (!matched.length && keyword !== query) {
-        items = await requestTagoStations(keyword);
+      const allStations = await loadTagoStationNames();
+      let matched = allStations.filter(item => normalizeStationName(item.name).includes(query));
+
+      if (!matched.length) {
+        const items = await requestTagoStations(query);
         matched = items.filter(item => normalizeStationName(item.name).includes(query));
       }
-
+      if (!matched.length && String(keyword).trim() !== query) {
+        const items = await requestTagoStations(String(keyword).trim());
+        matched = items.filter(item => normalizeStationName(item.name).includes(query));
+      }
       if (!matched.length) throw new Error(`TAGO 전국 역 목록에서 "${keyword}" 역을 찾지 못했습니다.`);
       return matched;
     }
