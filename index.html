@@ -371,17 +371,95 @@
    @media(max-width:640px){.intro-title{letter-spacing:.025em}#enterAppBtn{min-width:190px;font-size:18px!important}main>div{padding:1rem!important}}
    @media(prefers-reduced-motion:reduce){.intro-title{animation:none!important}}
 
+
+  /* Restored pastel gradient intro with floating pixel clouds and bus. */
+  #introScreen{
+    background:linear-gradient(135deg,#f7d9e9 0%,#e8dcf7 48%,#ccefe2 100%)!important;
+    background-image:
+      radial-gradient(circle at 18% 18%,rgba(255,255,255,.42) 0 2px,transparent 3px),
+      radial-gradient(circle at 78% 28%,rgba(255,255,255,.34) 0 2px,transparent 3px),
+      linear-gradient(135deg,#f7d9e9 0%,#e8dcf7 48%,#ccefe2 100%)!important;
+  }
+  #introScreen::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.18;
+    background-image:linear-gradient(rgba(126,108,165,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(126,108,165,.18) 1px,transparent 1px);
+    background-size:28px 28px;
+    mask-image:linear-gradient(to bottom,transparent 55%,#000 100%);
+  }
+  .intro-sky{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  .intro-cloud{
+    position:absolute;height:25px;background:#fff2fb;opacity:.78;
+    clip-path:polygon(0 65%,12% 65%,12% 40%,25% 40%,25% 15%,62% 15%,62% 40%,82% 40%,82% 65%,100% 65%,100% 100%,0 100%);
+    filter:drop-shadow(0 4px 0 rgba(151,130,183,.13));
+    animation:cloud-drift 22s ease-in-out infinite alternate;
+  }
+  .intro-cloud-one{width:150px;top:18%;left:8%}
+  .intro-cloud-two{width:190px;top:27%;right:7%;transform:scale(.8);animation-delay:-8s}
+  .intro-cloud-three{width:110px;top:12%;left:67%;transform:scale(.65);animation-delay:-13s}
+  .intro-pixel{position:absolute;width:10px;height:10px;background:#e9acd0;opacity:.55;transform:rotate(35deg);animation:pixel-drift 8s ease-in-out infinite}
+  .intro-pixel-one{top:17%;left:25%}.intro-pixel-two{top:32%;right:24%;background:#9ddbc9;animation-delay:-3s}.intro-pixel-three{top:43%;left:77%;background:#b8a9e4;animation-delay:-5s}
+  .intro-bus{
+    position:absolute;z-index:2;width:min(390px,68vw);left:50%;bottom:5.5%;
+    transform:translateX(-50%);filter:drop-shadow(0 9px 0 rgba(115,99,157,.17));
+    animation:bus-float 3.8s ease-in-out infinite;
+  }
+  .intro-bus svg{display:block;width:100%;height:auto;image-rendering:pixelated}
+  .intro-content{z-index:3;transform:translateY(-8vh);padding-bottom:150px}
+  .intro-title,.intro-kicker,.intro-subtitle,.intro-footnote,#enterAppBtn{
+    font-family:'BitBit','Press Start 2P','Noto Sans KR',monospace!important;
+  }
+  .intro-title{color:#fffaff!important;text-shadow:0 3px 0 #b9a9d7,0 7px 0 #8e81b1,0 0 20px rgba(179,166,218,.42)}
+  @keyframes cloud-drift{from{translate:-8px 0}to{translate:18px 5px}}
+  @keyframes pixel-drift{0%,100%{translate:0 0}50%{translate:8px -13px}}
+  @keyframes bus-float{0%,100%{translate:0 0}50%{translate:0 -9px}}
+  /* Apply the pixel font consistently while preserving icon-font glyphs. */
+  body,body p,body span,body div,body label,body button,body input,body textarea,body select,body option,
+  body h1,body h2,body h3,body li,body small,body strong,body a{
+    font-family:'BitBit','Noto Sans KR',monospace!important;
+  }
+  .fa,.fas,.far,.fal,.fab,[class^="fa-"],[class*=" fa-"]{font-family:"Font Awesome 6 Free","Font Awesome 6 Brands"!important}
+  @media(max-width:640px){
+    .intro-bus{width:min(310px,78vw);bottom:4%}
+    .intro-content{transform:translateY(-5vh);padding-bottom:115px}
+    .intro-cloud-one{left:-3%}.intro-cloud-two{right:-12%}
+  }
+
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
   <!-- HALFWAY welcome screen -->
   <section id="introScreen" aria-label="HALFWAY 시작 화면">
+    <div class="intro-sky" aria-hidden="true">
+      <span class="intro-cloud intro-cloud-one"></span>
+      <span class="intro-cloud intro-cloud-two"></span>
+      <span class="intro-cloud intro-cloud-three"></span>
+      <span class="intro-pixel intro-pixel-one"></span>
+      <span class="intro-pixel intro-pixel-two"></span>
+      <span class="intro-pixel intro-pixel-three"></span>
+    </div>
     <div class="intro-content">
       <p class="intro-kicker">✦  WELCOME TO  ✦</p>
       <h1 class="intro-title">HALFWAY</h1>
       <p class="intro-subtitle">PIXEL MEETING FINDER</p>
       <button id="enterAppBtn" type="button" onclick="enterHalfway()">FIND WAY</button>
       <p class="intro-footnote">FIND YOUR WAY TOGETHER</p>
+    </div>
+    <div class="intro-bus" aria-hidden="true">
+      <svg viewBox="0 0 420 190" role="img">
+        <g stroke="#7568c8" stroke-width="5" stroke-linejoin="round">
+          <path fill="#bcebdc" d="M38 53h344q17 0 17 18v73H21V70q0-17 17-17z"/>
+          <path fill="#d8c8f3" d="M51 31h57l13 22H39zM279 31h58l13 22H267z"/>
+          <path fill="#f6cce4" d="M34 75h88v52H34zM139 75h24v52h-24zM180 75h80v52h-80zM276 75h86v52h-86zM378 75h12v52h-12z"/>
+          <path fill="#f8e9a9" d="M41 82h74v39H41zM187 82h66v39h-66zM284 82h70v39h-70z"/>
+          <path fill="#bcebdc" d="M22 137h377v20H22zM51 157h318l-12 15H65z"/>
+          <path fill="#f2a8d0" d="M45 142h35v10H45zM91 142h34v10H91zM281 142h42v10h-42z"/>
+          <circle cx="105" cy="168" r="15" fill="#8e83bd"/><circle cx="105" cy="168" r="6" fill="#f8e9f4"/>
+          <circle cx="315" cy="168" r="15" fill="#8e83bd"/><circle cx="315" cy="168" r="6" fill="#f8e9f4"/>
+        </g>
+        <path d="M53 91l24 25m-8-34 30 34m106-25 22 25m-7-34 28 34m70-25 22 25m-7-34 28 34" stroke="#fff7cb" stroke-width="5" opacity=".9"/>
+        <rect x="169" y="80" width="9" height="44" rx="2" fill="#a99be1"/>
+        <path d="M189 127h65" stroke="#7568c8" stroke-width="4"/>
+      </svg>
     </div>
   </section>
 
