@@ -51,7 +51,7 @@
   * { image-rendering: pixelated; }
   body {
     position: relative; isolation: isolate;
-    background: linear-gradient(180deg, rgba(255,224,238,.90), rgba(220,207,248,.86) 48%, rgba(190,235,221,.88)) !important;
+    background: #f8f7fb !important;
     color: var(--ink) !important; font-family: 'BitBit','Noto Sans KR',sans-serif !important;
   }
 
@@ -120,7 +120,7 @@
   }
 
   html { scroll-behavior: smooth; }
-  body { background-color: #f7eaf4 !important; }
+  body { background: #f8f7fb !important; }
   header {
     border-bottom: 3px solid var(--purple) !important;
     box-shadow: 0 4px 0 rgba(103, 86, 137, .13);
@@ -325,8 +325,8 @@
   /* One source of truth for the HALFWAY pastel pixel design. */
   :root{--pink:#edc3dc;--pink-light:#fff1f8;--purple:#c9bce9;--purple-dark:#776b9d;--mint:#bcebdc;--ink:#514a68;--paper:#fffaff;--lavender-gray:#b7accd}
   html{background:#f4eff9!important}
-  body{position:relative!important;isolation:isolate!important;background:linear-gradient(135deg,#f8f1fa 0%,#f0ebfa 52%,#eaf7f1 100%)!important;color:var(--ink)!important;font-family:'BitBit','Noto Sans KR',sans-serif!important}
-  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.36;background-image:linear-gradient(90deg,rgba(143,126,181,.12) 1px,transparent 1px),linear-gradient(rgba(143,126,181,.12) 1px,transparent 1px),linear-gradient(135deg,rgba(239,195,220,.24),rgba(201,188,233,.18) 52%,rgba(188,235,220,.24));background-size:12px 12px,12px 12px,100% 100%;image-rendering:pixelated}
+  body{position:relative!important;isolation:isolate!important;background:#f8f7fb!important;background-image:none!important;color:var(--ink)!important;font-family:'BitBit','Noto Sans KR',sans-serif!important}
+  body::before,body::after{content:none!important;display:none!important}
   body::after{content:none!important;display:none!important}
   body>*{position:relative;z-index:1}
   header,footer{background:rgba(255,250,255,.96)!important;border-color:#d5c9e8!important;backdrop-filter:none!important}
@@ -352,147 +352,25 @@
   i,.fa-solid,.fa-regular{color:#8c7caf!important}
   #addBtn i,#calculateBtn i,#memberList button i,#resultArea a i{color:inherit!important}
 
-  #introScreen{position:fixed!important;inset:0!important;z-index:5000!important;isolation:isolate;display:grid;place-items:center;overflow:hidden;color:#5b5277!important;background:radial-gradient(ellipse at 18% 18%,rgba(255,255,255,.78),transparent 35%),radial-gradient(ellipse at 82% 76%,rgba(188,235,220,.56),transparent 42%),linear-gradient(135deg,#d8cff1 0%,#f5d8e9 52%,#c9eee1 100%)!important;transition:opacity .42s ease,visibility .42s ease}
-  #introScreen.leaving{opacity:0;visibility:hidden;pointer-events:none}
-  .intro-stars{position:absolute;inset:0;z-index:-1;opacity:.46;background-image:radial-gradient(2px 2px at 12% 18%,#fff 98%,transparent),radial-gradient(2px 2px at 23% 66%,#b4e8d8 98%,transparent),radial-gradient(2px 2px at 76% 22%,#fff 98%,transparent),radial-gradient(2px 2px at 88% 55%,#c9bce9 98%,transparent),radial-gradient(2px 2px at 61% 78%,#efb8d7 98%,transparent)}
-  .intro-grid{position:absolute;z-index:-1;left:-22%;right:-22%;bottom:-40%;height:66%;transform:perspective(440px) rotateX(62deg);transform-origin:top center;opacity:.35;background-image:linear-gradient(rgba(116,103,157,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(116,103,157,.22) 1px,transparent 1px);background-size:38px 30px;box-shadow:0 -18px 70px rgba(158,139,195,.10)}
-  .intro-pixel-rain{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;opacity:.62}
-  .intro-pixel-rain i{position:absolute;top:-24px;left:var(--x);width:var(--size);height:var(--size);opacity:0;background:#eebbd8;animation:pixel-fall var(--duration) linear var(--delay) infinite;image-rendering:pixelated}
-  .intro-pixel-rain i:nth-child(3n){background:#9edfc9}.intro-pixel-rain i:nth-child(3n + 1){background:#b7a9df}.intro-pixel-rain i:nth-child(3n + 2){background:#eebbd8}
-  @keyframes pixel-fall{0%{transform:translate3d(0,-5vh,0) rotate(0);opacity:0}12%{opacity:.9}85%{opacity:.75}100%{transform:translate3d(var(--drift),110vh,0) rotate(220deg);opacity:0}}
-  .intro-content{position:relative;z-index:2;width:min(920px,92vw);padding:36px 18px 56px;text-align:center;transform:translateY(-2vh)}
-  .intro-kicker{margin:0 0 18px;color:#786b9c!important;font:17px 'BitBit','Noto Sans KR',sans-serif;letter-spacing:.2em;text-shadow:0 1px rgba(255,255,255,.8)}
-  .intro-title{display:inline-block;margin:0;color:#fff8fd!important;font:clamp(58px,11vw,112px)/1.12 'BitBit','Noto Sans KR',sans-serif;letter-spacing:.075em;-webkit-text-stroke:1px #a596c7;text-shadow:0 3px 0 #b9a9d7,0 7px 0 #8e81b1,0 0 20px rgba(255,255,255,.82),0 0 38px rgba(179,166,218,.42);animation:halfway-bounce 1.55s ease-in-out infinite;transform-origin:center bottom}
-  .intro-subtitle{margin:17px 0 38px;color:#766b9b!important;font:clamp(12px,2vw,17px) 'BitBit','Noto Sans KR',sans-serif;letter-spacing:.22em}
-  #enterAppBtn{min-width:230px;padding:17px 36px;color:#514a68!important;background:linear-gradient(180deg,#c8f0e2,#aee5d4)!important;border:3px solid #8175a3!important;border-radius:5px!important;box-shadow:0 0 0 3px #f7e8f3,5px 7px 0 #a99ac5!important;font:22px 'BitBit','Noto Sans KR',sans-serif!important;letter-spacing:.12em}
-  #enterAppBtn:hover{filter:brightness(1.04);transform:translateY(-3px)}#enterAppBtn:active{transform:translate(4px,5px);box-shadow:0 0 0 3px #f7e8f3,1px 2px 0 #a99ac5!important}
-  .intro-footnote{margin:25px 0 0;color:#80769c!important;font:10px 'BitBit','Noto Sans KR',sans-serif;letter-spacing:.22em}
-  @keyframes halfway-bounce{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-15px) scale(1.025)}60%{transform:translateY(-9px) scale(1.01)}}
-  @media(max-width:640px){.intro-title{letter-spacing:.025em}#enterAppBtn{min-width:190px;font-size:18px!important}main>div{padding:1rem!important}}
-  @media(prefers-reduced-motion:reduce){.intro-title,.intro-pixel-rain i{animation:none!important}}
-
-
-  /* Readability refinement: deeper pastel welcome backdrop, brighter lettering. */
   #introScreen{
-    background:
-      radial-gradient(ellipse at 18% 18%,rgba(213,202,239,.16),transparent 38%),
-      radial-gradient(ellipse at 82% 76%,rgba(160,221,202,.19),transparent 42%),
-      linear-gradient(135deg,#756b96 0%,#986f91 52%,#648f86 100%)!important;
-    color:#fff8fd!important;
-  }
-  #introScreen .intro-kicker,
-  #introScreen .intro-subtitle,
-  #introScreen .intro-footnote{
-    color:#fff4fb!important;
-    text-shadow:0 2px 5px rgba(48,39,70,.38)!important;
-  }
-  #introScreen .intro-stars{opacity:.72}
-  #introScreen .intro-grid{
-    opacity:.25;
-    background-image:linear-gradient(rgba(255,237,250,.24) 1px,transparent 1px),linear-gradient(90deg,rgba(255,237,250,.24) 1px,transparent 1px);
-  }
-  #introScreen .intro-title{
-    color:#fffaff!important;
-    -webkit-text-stroke:1px #d8c9ed;
-    text-shadow:0 3px 0 #a99acb,0 7px 0 #766b96,0 0 20px rgba(255,255,255,.62),0 0 42px rgba(240,205,231,.34);
-  }
-  /* Keep the pastel palette but make the landing screen less glaring. */
-  .pixel-spark{animation-duration:1.15s!important}
-  @keyframes pixel-pop{
-    0%{opacity:0;transform:translate(0,0) scale(.55)}
-    15%{opacity:1}
-    78%{opacity:.88}
-    100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.35)}
-  }
-  @media(min-width:1280px){
-    main{max-width:76rem!important}
-  }
+     position:fixed;inset:0;z-index:5000;display:grid;place-items:center;
+     overflow:hidden;isolation:isolate;color:#5b5277!important;
+     background:#f8f7fb!important;background-image:none!important;
+     transition:opacity .42s ease,visibility .42s ease;
+   }
+   #introScreen.leaving{opacity:0;visibility:hidden;pointer-events:none}
+   .intro-content{position:relative;z-index:2;width:min(920px,92vw);padding:36px 18px 56px;text-align:center;transform:translateY(-2vh)}
+   .intro-kicker{margin:0 0 18px;color:#786b9c!important;font:17px 'BitBit','Noto Sans KR',sans-serif;letter-spacing:.2em}
+   .intro-title{display:inline-block;margin:0;color:#fff8fd!important;font:clamp(58px,11vw,112px)/1.12 'BitBit','Noto Sans KR',sans-serif;letter-spacing:.075em;-webkit-text-stroke:1px #a596c7;text-shadow:0 3px 0 #b9a9d7,0 7px 0 #8e81b1,0 0 20px rgba(179,166,218,.35);animation:halfway-bounce 1.55s ease-in-out infinite;transform-origin:center bottom}
+   .intro-subtitle{margin:17px 0 38px;color:#766b9b!important;font:clamp(12px,2vw,17px) 'BitBit','Noto Sans KR',sans-serif;letter-spacing:.22em}
+   #enterAppBtn{min-width:230px;padding:17px 36px;color:#514a68!important;background:#bcebdc!important;border:3px solid #8175a3!important;border-radius:5px!important;box-shadow:0 0 0 3px #f7e8f3,5px 7px 0 #a99ac5!important;font:22px 'BitBit','Noto Sans KR',sans-serif!important;letter-spacing:.12em}
+   #enterAppBtn:hover{filter:brightness(1.04);transform:translateY(-3px)}
+   #enterAppBtn:active{transform:translate(4px,5px);box-shadow:0 0 0 3px #f7e8f3,1px 2px 0 #a99ac5!important}
+   .intro-footnote{margin:25px 0 0;color:#80769c!important;font:10px 'BitBit','Noto Sans KR',sans-serif;letter-spacing:.22em}
+   @keyframes halfway-bounce{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-15px) scale(1.025)}60%{transform:translateY(-9px) scale(1.01)}}
+   @media(max-width:640px){.intro-title{letter-spacing:.025em}#enterAppBtn{min-width:190px;font-size:18px!important}main>div{padding:1rem!important}}
+   @media(prefers-reduced-motion:reduce){.intro-title{animation:none!important}}
 
-
-  /* Fixed pixel-sunset cityscape; only clouds, title and bus move. */
-  #introScreen{background:linear-gradient(180deg,#f5b9c8 0%,#d8b5d9 54%,#a8cfc8 100%)!important}
-  #introScreen .intro-city-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom;image-rendering:pixelated;z-index:-2;pointer-events:none}
-  #introScreen::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(246,194,210,.26),rgba(193,174,222,.24) 56%,rgba(151,207,192,.28));}
-  #introScreen .intro-stars{z-index:0;opacity:.28}
-  #introScreen .intro-grid{z-index:0;opacity:.18}
-  #introScreen .intro-pixel-rain{z-index:2;opacity:.4}
-  #introScreen .intro-content{z-index:4}
-  #introScreen .intro-title{animation:halfway-float 3.2s ease-in-out infinite!important}
-  #introScreen .intro-kicker,#introScreen .intro-subtitle,#introScreen .intro-footnote{color:#fff7fc!important;text-shadow:0 2px 5px rgba(70,54,91,.45)!important}
-  #introScreen .intro-title{color:#fffaff!important;-webkit-text-stroke:1.5px #8d79b5!important;text-shadow:0 4px 0 #8e7bb3,0 8px 0 rgba(73,62,111,.55),0 0 22px rgba(255,238,248,.9)!important}
-  #introScreen #enterAppBtn{background:linear-gradient(180deg,#c7f0df,#a7dfcf)!important;color:#544b70!important;border-color:#756b9d!important;box-shadow:0 0 0 3px rgba(255,242,250,.9),5px 7px 0 rgba(96,79,132,.5)!important}
-  .intro-cloud{position:absolute;z-index:1;width:clamp(90px,14vw,170px);height:30px;opacity:.78;pointer-events:none;filter:drop-shadow(0 3px 0 rgba(116,95,148,.12));background:linear-gradient(180deg,#fff0f5,#e8c9e8);clip-path:polygon(0 72%,8% 72%,8% 48%,20% 48%,20% 20%,37% 20%,37% 0,60% 0,60% 22%,77% 22%,77% 48%,92% 48%,92% 72%,100% 72%,100% 100%,0 100%)}
-  .cloud-one{top:18%;left:-18%;animation:cloud-drift 38s linear infinite}
-  .cloud-two{top:31%;left:108%;transform:scale(.72);opacity:.62;animation:cloud-drift-reverse 48s linear infinite}
-  .intro-bus{position:absolute;z-index:3;bottom:8%;left:-360px;width:clamp(220px,31vw,360px);height:auto;image-rendering:pixelated;filter:drop-shadow(0 7px 0 rgba(75,62,122,.2));animation:bus-drive 24s linear infinite;pointer-events:none}
-  @keyframes bus-drive{0%{transform:translateX(-4vw)}100%{transform:translateX(calc(100vw + 420px))}}
-  @keyframes cloud-drift{0%{transform:translateX(0)}100%{transform:translateX(calc(100vw + 260px))}}
-  @keyframes cloud-drift-reverse{0%{transform:translateX(0) scale(.72)}100%{transform:translateX(calc(-100vw - 260px)) scale(.72)}}
-  @keyframes halfway-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
-  @media(max-width:640px){#introScreen .intro-city-background{object-position:58% bottom}.intro-bus{bottom:7%;width:230px}.intro-cloud{height:22px}}
-  @media(prefers-reduced-motion:reduce){.intro-bus,.intro-cloud,#introScreen .intro-title{animation:none!important}}
-
-
-  /* Pixel city image: preserve the original skyline artwork and recolor it with the HALF WAY palette. */
-  #introScreen{
-    background:transparent!important;
-    background-color:transparent!important;
-  }
-  #introScreen .intro-city-background{
-    position:absolute!important;
-    inset:0!important;
-    z-index:0!important;
-    display:block!important;
-    width:100%!important;
-    height:100%!important;
-    object-fit:cover!important;
-    object-position:center bottom!important;
-    image-rendering:pixelated;
-    filter:saturate(.82) hue-rotate(9deg) brightness(.88) contrast(1.12);
-    opacity:1!important;
-    pointer-events:none!important;
-  }
-  #introScreen::before{content:none!important;display:none!important;background:none!important}
-  #introScreen .intro-stars{z-index:1!important;opacity:.24!important}
-  #introScreen .intro-grid{z-index:1!important;opacity:.13!important}
-  #introScreen .intro-cloud{z-index:2!important}
-  #introScreen .intro-bus{z-index:3!important}
-  #introScreen .intro-pixel-rain{z-index:4!important}
-  #introScreen .intro-content{z-index:5!important}
-
-
-  /* Repair the welcome-screen artwork and keep it as a true full-screen layer. */
-  #introScreen{
-    position:fixed!important;inset:0!important;z-index:5000!important;
-    display:grid!important;place-items:center!important;overflow:hidden!important;
-    background:#bca9d4!important;background-image:none!important;
-    isolation:isolate!important;
-  }
-  #introScreen.leaving{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
-  #introScreen .intro-city-background{
-    position:absolute!important;inset:0!important;z-index:0!important;
-    display:block!important;width:100%!important;height:100%!important;
-    object-fit:cover!important;object-position:center bottom!important;
-    image-rendering:auto!important;opacity:1!important;
-    filter:saturate(.96) hue-rotate(8deg) brightness(.94) contrast(1.06)!important;
-  }
-  #introScreen::before{content:none!important;display:none!important}
-  #introScreen .intro-stars{z-index:1!important;opacity:.10!important}
-  #introScreen .intro-grid{display:none!important}
-  #introScreen .intro-cloud{z-index:2!important;opacity:.72!important}
-  #introScreen .intro-bus{
-    z-index:3!important;width:clamp(180px,22vw,280px)!important;
-    bottom:4%!important;left:-300px!important;
-  }
-  #introScreen .intro-pixel-rain{z-index:4!important;opacity:.22!important}
-  #introScreen .intro-content{z-index:5!important;position:relative!important}
-
-  /* Reset previous background experiments to a plain, neutral canvas. */
-  html, body { background: #f8f7fb !important; background-image: none !important; }
-  body::before, body::after { content: none !important; display: none !important; }
-  #introScreen { background: #f8f7fb !important; background-image: none !important; }
-  #introScreen .intro-stars, #introScreen .intro-grid, #introScreen .intro-pixel-rain,
-  #introScreen .intro-city-background, #introScreen .intro-cloud, #introScreen .intro-bus { display:none!important; }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
@@ -599,7 +477,7 @@
         </div>
 
         <div id="memberList" class="space-y-2 min-h-[60px] flex flex-col justify-center">
-          <p id="emptyNotice" class="text-xs text-slate-400 text-center py-4 border border-dashed border-slate-200 rounded-xl bg-white">
+          <p  class="text-xs text-slate-400 text-center py-4 border border-dashed border-slate-200 rounded-xl bg-white">
             아직 등록된 구성원이 없습니다. 상단 양식에서 출발지를 추가해 주세요.
           </p>
         </div>
@@ -790,7 +668,7 @@
 
       if (members.length === 0) {
         listEl.innerHTML = `
-          <p id="emptyNotice" class="text-xs text-slate-400 text-center py-4 border border-dashed border-slate-200 rounded-xl bg-white">
+          <p  class="text-xs text-slate-400 text-center py-4 border border-dashed border-slate-200 rounded-xl bg-white">
             아직 등록된 구성원이 없습니다. 상단 양식에서 출발지를 추가해 주세요.
           </p>`;
         return;
@@ -977,7 +855,12 @@
       const query = normalizeStationName(keyword);
       if (!query) throw new Error('검색할 역 이름을 입력해 주세요.');
 
-      const allStations = await loadTagoStationNames();
+      let allStations = [];
+      try {
+        allStations = await loadTagoStationNames();
+      } catch (error) {
+        // Fall back to the keyword endpoint if the full-list request is unavailable.
+      }
       let matched = allStations.filter(item => normalizeStationName(item.name).includes(query));
 
       if (!matched.length) {
